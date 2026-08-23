@@ -1,4 +1,6 @@
+import Counter from './components/Counter.jsx'
 import ProfileCard from './components/ProfileCard.jsx'
+import TodoList from './components/TodoList.jsx'
 
 function App() {
   return (
@@ -18,6 +20,10 @@ function App() {
       />
 
       <ProfileCard />
+
+      <Counter />
+
+      <TodoList />
     </main>
   )
 }
