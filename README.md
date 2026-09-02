@@ -1,16 +1,37 @@
-# React + Vite
+# React Student Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A frontend-only Student Dashboard built with React as part of a React fundamentals training project.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Student registration using controlled React forms
+- Validation for required fields and GPA range
+- Success and error toast notifications
+- Student details modal
+- Student data persistence using localStorage
+- Responsive student table
+- Filter students by course
+- Delete registered students
+- Random user API fetching exercise using useEffect
+- Reusable React components
+- Unit tests using Vitest and React Testing Library
+- ESLint and Prettier configuration
 
-## React Compiler
+## Technologies
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React
+- Vite
+- JavaScript
+- Vitest
+- React Testing Library
+- react-toastify
+- ESLint
+- Prettier
+- localStorage
 
-## Expanding the ESLint configuration
+## Setup
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Install dependencies:
+
+```bash
+npm install

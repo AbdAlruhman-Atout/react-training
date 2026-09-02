@@ -109,3 +109,33 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.student-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.student-table th,
+.student-table td {
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+.student-table th {
+  font-weight: bold;
+}
+
+.student-table button {
+  margin-right: 0.5rem;
+}
+
+@media (max-width: 600px) {
+  .student-table {
+    min-width: 600px;
+  }
+}
