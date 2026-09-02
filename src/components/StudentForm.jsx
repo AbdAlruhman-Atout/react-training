@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { toast } from 'react-toastify'
 
-function StudentForm() {
+function StudentForm({ onAddStudent }) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -61,6 +61,7 @@ function StudentForm() {
     }
 
     setSubmittedStudent(formData)
+    onAddStudent(formData)
     toast.success('Student registered successfully')
   }
 
