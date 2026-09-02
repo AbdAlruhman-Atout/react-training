@@ -1,6 +1,7 @@
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import StudentForm from './components/StudentForm.jsx'
+import RandomUser from './components/RandomUser.jsx'
 
 function App() {
   return (
@@ -8,6 +9,8 @@ function App() {
       <h1>React Training</h1>
 
       <StudentForm />
+
+      <RandomUser />
 
       <ToastContainer />
     </main>
