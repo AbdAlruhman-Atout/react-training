@@ -1,70 +1,65 @@
 import { useState } from 'react'
 import { toast } from 'react-toastify'
+
+import useForm from '../hooks/useForm.js'
 import useStudents from '../hooks/useStudents.js'
+
+const initialValues = {
+  name: '',
+  email: '',
+  course: '',
+  gpa: '',
+}
+
+function validateStudent(values) {
+  const errors = {}
+
+  if (!values.name.trim()) {
+    errors.name = 'Name is required'
+  }
+
+  if (!values.email.trim()) {
+    errors.email = 'Email is required'
+  }
+
+  if (!values.course) {
+    errors.course = 'Course is required'
+  }
+
+  if (values.gpa === '') {
+    errors.gpa = 'GPA is required'
+  } else {
+    const gpa = Number(values.gpa)
+
+    if (gpa < 0 || gpa > 4) {
+      errors.gpa = 'GPA must be between 0 and 4'
+    }
+  }
+
+  return errors
+}
 
 function StudentForm() {
   const { addStudent } = useStudents()
-
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    course: '',
-    gpa: '',
-  })
-
-  const [errors, setErrors] = useState({})
   const [submittedStudent, setSubmittedStudent] = useState(null)
 
-  function handleChange(event) {
-    const { name, value } = event.target
-
-    setFormData({
-      ...formData,
-      [name]: value,
-    })
-  }
-
-  function validateForm() {
-    const newErrors = {}
-
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required'
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required'
-    }
-
-    if (!formData.course) {
-      newErrors.course = 'Course is required'
-    }
-
-    if (formData.gpa === '') {
-      newErrors.gpa = 'GPA is required'
-    } else {
-      const gpa = Number(formData.gpa)
-
-      if (gpa < 0 || gpa > 4) {
-        newErrors.gpa = 'GPA must be between 0 and 4'
-      }
-    }
-
-    return newErrors
-  }
+  const { values, errors, handleChange, validateForm } = useForm(
+    initialValues,
+    validateStudent,
+  )
 
   function handleSubmit(event) {
     event.preventDefault()
 
-    const newErrors = validateForm()
-    setErrors(newErrors)
+    const isValid = validateForm()
 
-    if (Object.keys(newErrors).length > 0) {
+    if (!isValid) {
       toast.error('Please fix the form errors')
       return
     }
 
-    addStudent(formData)
-    setSubmittedStudent(formData)
+    addStudent(values)
+    setSubmittedStudent(values)
 
     toast.success('Student registered successfully')
   }
@@ -81,7 +76,7 @@ function StudentForm() {
             id="name"
             name="name"
             type="text"
-            value={formData.name}
+            value={values.name}
             onChange={handleChange}
           />
 
@@ -95,7 +90,7 @@ function StudentForm() {
             id="email"
             name="email"
             type="email"
-            value={formData.email}
+            value={values.email}
             onChange={handleChange}
           />
 
@@ -108,12 +103,15 @@ function StudentForm() {
           <select
             id="course"
             name="course"
-            value={formData.course}
+            value={values.course}
             onChange={handleChange}
           >
             <option value="">Select a course</option>
+
             <option value="Computer Science">Computer Science</option>
+
             <option value="Engineering">Engineering</option>
+
             <option value="Business">Business</option>
           </select>
 
@@ -128,7 +126,7 @@ function StudentForm() {
             name="gpa"
             type="number"
             step="0.01"
-            value={formData.gpa}
+            value={values.gpa}
             onChange={handleChange}
           />
 
