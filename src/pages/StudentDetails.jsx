@@ -1,11 +1,24 @@
+import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+
+import StudentEditForm from '../components/StudentEditForm.jsx'
 import useStudents from '../hooks/useStudents.js'
 
 function StudentDetails() {
   const { id } = useParams()
   const navigate = useNavigate()
 
-  const { students } = useStudents()
+  const [editing, setEditing] = useState(false)
+
+  const { students, loading, error } = useStudents()
+
+  if (loading && students.length === 0) {
+    return <p>Loading student...</p>
+  }
+
+  if (error) {
+    return <p>Failed to load students: {error}</p>
+  }
 
   const student = students.find((student) => String(student.id) === id)
 
@@ -14,12 +27,16 @@ function StudentDetails() {
       <div>
         <h1>Student Not Found</h1>
 
-        <p>No student exists with ID {id}.</p>
-
         <button type="button" onClick={() => navigate('/students')}>
           Back to Students
         </button>
       </div>
+    )
+  }
+
+  if (editing) {
+    return (
+      <StudentEditForm student={student} onCancel={() => setEditing(false)} />
     )
   }
 
@@ -42,6 +59,10 @@ function StudentDetails() {
       <p>
         <strong>GPA:</strong> {student.gpa}
       </p>
+
+      <button type="button" onClick={() => setEditing(true)}>
+        Edit
+      </button>
 
       <button type="button" onClick={() => navigate('/students')}>
         Back to Students

@@ -1,5 +1,13 @@
+import RandomUser from '../components/RandomUser.jsx'
+
 function Home() {
-  return <h1>Home</h1>
+  return (
+    <div>
+      <h1>Home</h1>
+
+      <RandomUser />
+    </div>
+  )
 }
 
 export default Home

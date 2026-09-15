@@ -1,9 +1,27 @@
 import { Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
+
 import StudentForm from '../components/StudentForm.jsx'
 import useStudents from '../hooks/useStudents.js'
 
 function Students() {
-  const { students, removeStudent } = useStudents()
+  const {
+    students,
+    loading,
+    error,
+    actionLoading,
+    actionError,
+    removeStudent,
+  } = useStudents()
+
+  async function handleDelete(id) {
+    try {
+      await removeStudent(id)
+      toast.success('Student deleted successfully')
+    } catch {
+      toast.error('Failed to delete student')
+    }
+  }
 
   return (
     <div>
@@ -11,9 +29,15 @@ function Students() {
 
       <StudentForm />
 
+      {error && <p>Failed to load students: {error}</p>}
+
+      {actionError && <p>Student action failed: {actionError}</p>}
+
       <h2>Registered Students</h2>
 
-      {students.length === 0 ? (
+      {loading && students.length === 0 ? (
+        <p>Loading students...</p>
+      ) : students.length === 0 ? (
         <p>No students found.</p>
       ) : (
         <ul>
@@ -24,7 +48,11 @@ function Students() {
               {' — '}
               {student.course}
 
-              <button type="button" onClick={() => removeStudent(student.id)}>
+              <button
+                type="button"
+                disabled={actionLoading}
+                onClick={() => handleDelete(student.id)}
+              >
                 Delete
               </button>
             </li>

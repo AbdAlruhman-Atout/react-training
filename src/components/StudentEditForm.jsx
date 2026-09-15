@@ -3,13 +3,6 @@ import { toast } from 'react-toastify'
 import useForm from '../hooks/useForm.js'
 import useStudents from '../hooks/useStudents.js'
 
-const initialValues = {
-  name: '',
-  email: '',
-  course: '',
-  gpa: '',
-}
-
 function validateStudent(values) {
   const errors = {}
 
@@ -38,11 +31,16 @@ function validateStudent(values) {
   return errors
 }
 
-function StudentForm() {
-  const { addStudent, actionLoading } = useStudents()
+function StudentEditForm({ student, onCancel }) {
+  const { updateStudent, actionLoading } = useStudents()
 
-  const { values, errors, handleChange, validateForm, resetForm } = useForm(
-    initialValues,
+  const { values, errors, handleChange, validateForm } = useForm(
+    {
+      name: student.name,
+      email: student.email,
+      course: student.course,
+      gpa: student.gpa,
+    },
     validateStudent,
   )
 
@@ -55,84 +53,78 @@ function StudentForm() {
     }
 
     try {
-      await addStudent(values)
+      await updateStudent(student.id, values)
 
-      resetForm()
-      toast.success('Student registered successfully')
+      toast.success('Student updated successfully')
+      onCancel()
     } catch {
-      toast.error('Failed to register student')
+      toast.error('Failed to update student')
     }
   }
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Student Registration</h2>
+      <h2>Edit Student</h2>
 
       <div>
-        <label htmlFor="name">Name</label>
-
+        <label htmlFor="edit-name">Name</label>
         <input
-          id="name"
+          id="edit-name"
           name="name"
           value={values.name}
           onChange={handleChange}
         />
-
         {errors.name && <p>{errors.name}</p>}
       </div>
 
       <div>
-        <label htmlFor="email">Email</label>
-
+        <label htmlFor="edit-email">Email</label>
         <input
-          id="email"
+          id="edit-email"
           name="email"
           type="email"
           value={values.email}
           onChange={handleChange}
         />
-
         {errors.email && <p>{errors.email}</p>}
       </div>
 
       <div>
-        <label htmlFor="course">Course</label>
-
+        <label htmlFor="edit-course">Course</label>
         <select
-          id="course"
+          id="edit-course"
           name="course"
           value={values.course}
           onChange={handleChange}
         >
-          <option value="">Select a course</option>
           <option value="Computer Science">Computer Science</option>
           <option value="Engineering">Engineering</option>
           <option value="Business">Business</option>
         </select>
-
-        {errors.course && <p>{errors.course}</p>}
       </div>
 
       <div>
-        <label htmlFor="gpa">GPA</label>
-
+        <label htmlFor="edit-gpa">GPA</label>
         <input
-          id="gpa"
+          id="edit-gpa"
           name="gpa"
           type="number"
           step="0.01"
           value={values.gpa}
           onChange={handleChange}
         />
-
         {errors.gpa && <p>{errors.gpa}</p>}
       </div>
 
       <button type="submit" disabled={actionLoading}>
-        {actionLoading ? 'Saving...' : 'Register'}
+        {actionLoading ? 'Saving...' : 'Save Changes'}
+      </button>
+
+      <button type="button" onClick={onCancel} disabled={actionLoading}>
+        Cancel
       </button>
     </form>
   )
 }
 
-export default StudentForm
+export default StudentEditForm
