@@ -1,68 +1,30 @@
-import { useEffect, useState } from 'react'
+import useFetch from '../hooks/useFetch.js'
 
 function RandomUser() {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-
-  useEffect(() => {
-    const controller = new AbortController()
-
-    fetch('https://randomuser.me/api/', {
-      signal: controller.signal,
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch user')
-        }
-
-        return response.json()
-      })
-      .then((data) => {
-        setUser(data.results[0])
-      })
-      .catch((err) => {
-        if (err.name !== 'AbortError') {
-          setError(err.message)
-        }
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) {
-          setLoading(false)
-        }
-      })
-
-    return () => {
-      controller.abort()
-    }
-  }, [])
-
-  async function handleNextUser() {
-    try {
-      setLoading(true)
-      setError('')
-
-      const response = await fetch('https://randomuser.me/api/')
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch user')
-      }
-
-      const data = await response.json()
-      setUser(data.results[0])
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const { data, loading, error, refetch } = useFetch(
+    'https://randomuser.me/api/',
+  )
 
   if (loading) {
     return <p>Loading...</p>
   }
 
   if (error) {
-    return <p>{error}</p>
+    return (
+      <div>
+        <p>Error: {error}</p>
+
+        <button type="button" onClick={refetch}>
+          Try Again
+        </button>
+      </div>
+    )
+  }
+
+  const user = data?.results?.[0]
+
+  if (!user) {
+    return <p>No user found.</p>
   }
 
   return (
@@ -79,7 +41,7 @@ function RandomUser() {
         {user.location.city}, {user.location.country}
       </p>
 
-      <button type="button" onClick={handleNextUser}>
+      <button type="button" onClick={refetch}>
         Next User
       </button>
     </div>
