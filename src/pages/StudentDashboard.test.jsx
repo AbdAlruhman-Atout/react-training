@@ -1,7 +1,17 @@
 import { beforeEach, expect, test } from 'vitest'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+
+import StudentProvider from '../context/StudentProvider.jsx'
 import StudentDashboard from './StudentDashboard.jsx'
+
+function renderDashboard() {
+  return render(
+    <StudentProvider>
+      <StudentDashboard />
+    </StudentProvider>,
+  )
+}
 
 beforeEach(() => {
   localStorage.clear()
@@ -10,13 +20,16 @@ beforeEach(() => {
 test('rejects an invalid student submission', async () => {
   const user = userEvent.setup()
 
-  render(<StudentDashboard />)
+  renderDashboard()
 
   await user.click(screen.getByRole('button', { name: 'Register' }))
 
   expect(screen.getByText('Name is required')).toBeInTheDocument()
+
   expect(screen.getByText('Email is required')).toBeInTheDocument()
+
   expect(screen.getByText('Course is required')).toBeInTheDocument()
+
   expect(screen.getByText('GPA is required')).toBeInTheDocument()
 
   expect(screen.getByText('Total students: 0')).toBeInTheDocument()
@@ -25,9 +38,10 @@ test('rejects an invalid student submission', async () => {
 test('valid submission adds a student row to the table', async () => {
   const user = userEvent.setup()
 
-  render(<StudentDashboard />)
+  renderDashboard()
 
   await user.type(screen.getByLabelText('Name'), 'Alice Smith')
+
   await user.type(screen.getByLabelText('Email'), 'alice@example.com')
 
   await user.selectOptions(screen.getByLabelText('Course'), 'Computer Science')
@@ -41,14 +55,22 @@ test('valid submission adds a student row to the table', async () => {
   const table = screen.getByRole('table')
 
   expect(
-    within(table).getByRole('cell', { name: 'Alice Smith' }),
+    within(table).getByRole('cell', {
+      name: 'Alice Smith',
+    }),
   ).toBeInTheDocument()
 
   expect(
-    within(table).getByRole('cell', { name: 'Computer Science' }),
+    within(table).getByRole('cell', {
+      name: 'Computer Science',
+    }),
   ).toBeInTheDocument()
 
-  expect(within(table).getByRole('cell', { name: '3.5' })).toBeInTheDocument()
+  expect(
+    within(table).getByRole('cell', {
+      name: '3.5',
+    }),
+  ).toBeInTheDocument()
 })
 
 test('renders the expected number of student rows', () => {
@@ -78,12 +100,11 @@ test('renders the expected number of student rows', () => {
 
   localStorage.setItem('students', JSON.stringify(students))
 
-  render(<StudentDashboard />)
+  renderDashboard()
 
   const table = screen.getByRole('table')
   const rows = within(table).getAllByRole('row')
 
-  // One header row + three student rows
   expect(rows).toHaveLength(4)
 
   expect(screen.getByText('Total students: 3')).toBeInTheDocument()
@@ -111,7 +132,7 @@ test('filters students by course', async () => {
 
   localStorage.setItem('students', JSON.stringify(students))
 
-  render(<StudentDashboard />)
+  renderDashboard()
 
   await user.selectOptions(
     screen.getByLabelText('Filter by course:'),
@@ -121,11 +142,15 @@ test('filters students by course', async () => {
   const table = screen.getByRole('table')
 
   expect(
-    within(table).getByRole('cell', { name: 'Bob Jones' }),
+    within(table).getByRole('cell', {
+      name: 'Bob Jones',
+    }),
   ).toBeInTheDocument()
 
   expect(
-    within(table).queryByRole('cell', { name: 'Alice Smith' }),
+    within(table).queryByRole('cell', {
+      name: 'Alice Smith',
+    }),
   ).not.toBeInTheDocument()
 })
 
@@ -144,14 +169,24 @@ test('deletes a student from the table', async () => {
 
   localStorage.setItem('students', JSON.stringify(students))
 
-  render(<StudentDashboard />)
-
-  expect(screen.getByRole('cell', { name: 'Alice Smith' })).toBeInTheDocument()
-
-  await user.click(screen.getByRole('button', { name: 'Delete' }))
+  renderDashboard()
 
   expect(
-    screen.queryByRole('cell', { name: 'Alice Smith' }),
+    screen.getByRole('cell', {
+      name: 'Alice Smith',
+    }),
+  ).toBeInTheDocument()
+
+  await user.click(
+    screen.getByRole('button', {
+      name: 'Delete',
+    }),
+  )
+
+  expect(
+    screen.queryByRole('cell', {
+      name: 'Alice Smith',
+    }),
   ).not.toBeInTheDocument()
 
   expect(screen.getByText('Total students: 0')).toBeInTheDocument()

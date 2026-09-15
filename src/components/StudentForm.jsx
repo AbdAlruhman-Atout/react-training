@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { toast } from 'react-toastify'
+import useStudents from '../hooks/useStudents.js'
 
-function StudentForm({ onAddStudent }) {
+function StudentForm() {
+  const { addStudent } = useStudents()
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -60,8 +63,9 @@ function StudentForm({ onAddStudent }) {
       return
     }
 
+    addStudent(formData)
     setSubmittedStudent(formData)
-    onAddStudent(formData)
+
     toast.success('Student registered successfully')
   }
 
