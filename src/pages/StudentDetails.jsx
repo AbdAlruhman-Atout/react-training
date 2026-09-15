@@ -1,10 +1,11 @@
 import { useNavigate, useParams } from 'react-router-dom'
+import useStudents from '../hooks/useStudents.js'
 
 function StudentDetails() {
   const { id } = useParams()
   const navigate = useNavigate()
 
-  const students = JSON.parse(localStorage.getItem('students')) || []
+  const { students } = useStudents()
 
   const student = students.find((student) => String(student.id) === id)
 
@@ -12,6 +13,7 @@ function StudentDetails() {
     return (
       <div>
         <h1>Student Not Found</h1>
+
         <p>No student exists with ID {id}.</p>
 
         <button type="button" onClick={() => navigate('/students')}>
